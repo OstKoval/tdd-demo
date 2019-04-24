@@ -3,6 +3,7 @@ package com.tdd.demo.service.impl;
 import com.tdd.demo.dto.merchant.MerchantDTO;
 import com.tdd.demo.entity.Agency;
 import com.tdd.demo.entity.Merchant;
+import com.tdd.demo.mapper.MerchantMapper;
 import com.tdd.demo.repository.MerchantRepository;
 import com.tdd.demo.service.AgencyService;
 import com.tdd.demo.service.MerchantService;
@@ -22,6 +23,9 @@ public class MerchantServiceImpl implements MerchantService {
     @Autowired
     private MerchantRepository merchantRepository;
 
+    @Autowired
+    private MerchantMapper merchantMapper;
+
     @Override
     @Transactional
     public MerchantDTO addMerchant(final MerchantDTO merchantDTO) {
@@ -34,7 +38,9 @@ public class MerchantServiceImpl implements MerchantService {
         if (Objects.nonNull(existingMerchant)) {
             throw new IllegalArgumentException("Merchant already exists");
         }
-
-        return null;
+        final Merchant merchant = merchantMapper.fromDTO(merchantDTO);
+        merchant.setAgency(agency);
+        final Merchant savedMerchant = merchantRepository.save(merchant);
+        return merchantMapper.toDTO(savedMerchant);
     }
 }
