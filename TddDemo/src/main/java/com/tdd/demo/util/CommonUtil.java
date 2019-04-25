@@ -1,8 +1,10 @@
 package com.tdd.demo.util;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class CommonUtil {
 
@@ -11,19 +13,12 @@ public class CommonUtil {
     }
 
     public static class Countries {
-        //        public static Set<String> ALL_COUNTRIES =  //TODO one-time init
-        public static Set<String> getAllCountries() {
-            final Set<String> allCountries = new TreeSet<>();
-            final String[] countryCodes = Locale.getISOCountries();
-
-            for (final String countryCode : countryCodes) {
-                allCountries.add(new Locale("", countryCode).getDisplayCountry());
-            }
-            return allCountries;
-        }
+        public static final Set<String> ALL_COUNTRIES = Arrays.stream(Locale.getISOCountries())
+                .map(l -> new Locale("", l).getDisplayCountry())
+                .collect(Collectors.toSet());
 
         public static void validateCountryName(final String countryName) {
-            if (!getAllCountries().contains(countryName)) {
+            if (!ALL_COUNTRIES.contains(countryName)) {
                 throw new IllegalArgumentException("Wrong value for country name!");
             }
         }
